@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Build A Blog!</h1>
+
+    <form method='get' action="/blog">
+        <input type="submit" value="New Entry">
+
+    </form>
+       
+    <hr />
+
+    {% if Blog|length == 0 %}
+    <p>No Blogs Yet</p>
+   
+    {% else %}
+
+    <ul>
+        {% for blog in blogs %}
+        
+        <li>{{blog.title}}
+            <form method="POST" action="/newpost" style="display:inline-block;">
+            <input type="hidden" name="blog_title" value="{{blog.id}}" />
+
+            </form>
+
+        </li>
+        {% endfor %}
+    </ul>
+
+    {% endif %}
+
+        
+
+{% endblock %}
+
+    
+    
+    
