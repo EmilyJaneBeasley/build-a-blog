@@ -15,46 +15,58 @@ class Blog(db.Model):
     body = db.Column(db.String(1000))
     
 
-    def __init__(self, title, body):
+    def __init__(self, title='', body=''):
         self.title = title
         self.body = body
 
-@app.route('/blog', methods=['POST', 'GET'])
+
+@app.route('/blog', methods=['POST','GET'])
 def index():
     if request.args:
-        blog_id = request.args.get('id')
-        blogs = Blog.query.filter_by(id=blog_id).all()
-        return render_template('blog.html',blogs=blogs)
+        blog_id=request.args.get("id")
+        blog=Blog.query.get(blog_id)
+
+        return render_template('single_entry.html',blog=blog)
+
     else:
-        blogs = Blog.query.all()
-        return render_template('blog.html',blogs=blogs)
+        blogs=Blog.query.all()
+        return render_template('blog.html', blogs=blogs)
 
 
 
-@app.route('/newpost', methods=['POST', 'GET'])
+@app.route('/newpost',methods=["POST", "GET"])
 def add_blog():
-    if request.method == 'POST':
-        blog_title = request.form['title']
-        blog_body = request.form['body']
-        title_error = ''
-        body_error = ''
+    if request.method=="GET":
+        return render_template('newpost.html')
 
-        if blog_title == '':
-            title_error = 'Please enter a title'
-        if blog_body == '':
-            body_error = 'Please enter a post'
+    title_error=''
+    body_error=''
+
+    if request.method=="POST":
+        blog_title=request.form['title']
+        blog_body=request.form['body']
         
-        if not title_error and not body_error:
-            new_post = Blog(blog_title, blog_body)
-            db.session.add(new_post)
-            db.session.commit()
-            new_id = str(new_post.id)
-            return redirect('/blog?id='+new_id)
-        else:
-            return render_template('newpost.html', title = blog_title, body = blog_body, 
-                title_error = title_error, body_error = body_error,)
-    
-    return render_template('newpost.html')
+
+    if len(blog_body) < 1:
+        body_error="Please enter a blog entry."
+
+
+    if len(blog_title) < 1:
+        title_error ="Please enter a blog title."
+
+    if not title_error and not body_error:
+        new_blog=Blog(blog_title,blog_body)
+        db.session.add(new_blog)
+        db.session.commit()
+        query_param_url = "/blog?id=" + str(new_blog.id)
+
+        return redirect(query_param_url)
+
+
+
+    else:
+
+        return render_template('newpost.html', title_error=title_error, body_error=body_error,blog_title=blog_title,blog_body=blog_body)
 
 if __name__ == '__main__':
     app.run()

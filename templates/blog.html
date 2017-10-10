@@ -2,7 +2,14 @@
 
 {% block content %}
 
-<h1>Build A Blog!</h1>
+<h1 align="center">Build a Blog</h1>
+
+{% if blogs|length ==0 %}
+<p>No blogs yet</p>
+
+    {% else %}
+
+
 
 
 <ul>
@@ -12,6 +19,7 @@
     <br>
     {% endfor %}
 </ul>
+    {% endif %}
 
 
 {% endblock %}
