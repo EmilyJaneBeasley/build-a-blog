@@ -45,28 +45,30 @@ def add_blog():
     if request.method=="POST":
         blog_title=request.form['title']
         blog_body=request.form['body']
-        
+    
 
-    if len(blog_body) < 1:
-        body_error="Please enter a blog entry."
-
-
-    if len(blog_title) < 1:
-        title_error ="Please enter a blog title."
 
     if not title_error and not body_error:
-        new_blog=Blog(blog_title,blog_body)
-        db.session.add(new_blog)
-        db.session.commit()
-        query_param_url = "/blog?id=" + str(new_blog.id)
-
-        return redirect(query_param_url)
+            new_blog=Blog(blog_title,blog_body)
+            db.session.add(new_blog)
+            db.session.commit()
+            query_param_url = "/blog?id=" + str(new_blog.id)
+  
+            return redirect(query_param_url)
+    
+    if blog_body == '':
+            blog_title = request.form['title']
+            return render_template('newpost.html', blog_title=blog_title) 
+    if blog_title == '':
+            blog_body = request.form['body']
+            return render_template('newpost.html', blog_body=blog_body)
+   
 
 
 
     else:
 
-        return render_template('newpost.html', title_error=title_error, body_error=body_error,blog_title=blog_title,blog_body=blog_body)
+            return render_template('newpost.html', title_error=title_error, body_error=body_error,blog_title=blog_title,blog_body=blog_body)
 
 if __name__ == '__main__':
-    app.run()
+    app.run()   
